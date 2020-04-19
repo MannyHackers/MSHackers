@@ -24,11 +24,11 @@ ariaDlManager.start_listener()
 
 
 class MirrorListener(listeners.MirrorListeners):
-
-    def __init__(self, bot, update, isTar=False, tag=None):
+    def __init__(self, bot, update, isTar=False,tag=None, extract=False):
         super().__init__(bot, update)
         self.isTar = isTar
         self.tag = tag
+        self.extract = extract
 
     def onDownloadStarted(self):
         pass
@@ -62,6 +62,24 @@ class MirrorListener(listeners.MirrorListeners):
                 LOGGER.info('File to archive not found!')
                 self.onUploadError('Internal error occurred!!')
                 return
+        elif self.extract:
+                path = fs_utils.get_base_name(m_path)
+                if path != "unsupported":
+                    LOGGER.info(
+                        f"Extracting : {download_dict[self.uid].name()} "
+                    )
+                    os.system(f"extract {m_path}")
+                    LOGGER.info(
+                        f'got path : {path}'
+                    )
+                    try:
+                        os.remove(m_path)
+                        LOGGER.info(f"Deleting archive : {m_path}")
+                    except Exception as e:
+                        LOGGER.error(str(e))
+                else:
+                    LOGGER.info("Not any valid archive, uploading file as it is.")
+                    path = f'{DOWNLOAD_DIR}{self.uid}/{download_dict[self.uid].name()}'
         else:
             path = f'{DOWNLOAD_DIR}{self.uid}/{download_dict[self.uid].name()}'
         up_name = pathlib.PurePath(path).name
@@ -145,8 +163,7 @@ class MirrorListener(listeners.MirrorListeners):
         else:
             update_all_messages()
 
-
-def _mirror(bot, update, isTar=False):
+def _mirror(bot, update, isTar=False, extract=False):
     message_args = update.message.text.split(' ')
     try:
         link = message_args[1]
@@ -186,7 +203,7 @@ def _mirror(bot, update, isTar=False):
         link = direct_link_generator(link)
     except DirectDownloadLinkException as e:
         LOGGER.info(f'{link}: {e}')
-    listener = MirrorListener(bot, update, isTar, tag)
+    listener = MirrorListener(bot, update, isTar, tag, extract)
     ariaDlManager.add_download(link, f'{DOWNLOAD_DIR}/{listener.uid}/',listener)
     sendStatusMessage(update, bot)
     if len(Interval) == 0:
@@ -203,9 +220,17 @@ def tar_mirror(update, context):
     _mirror(context.bot, update, True)
 
 
+@run_async
+def unzip_mirror(update, context):
+    _mirror(context.bot,update, extract=True)
+
+
 mirror_handler = CommandHandler(BotCommands.MirrorCommand, mirror,
                                 filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
 tar_mirror_handler = CommandHandler(BotCommands.TarMirrorCommand, tar_mirror,
                                     filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
+unzip_mirror_handler = CommandHandler(BotCommands.UnzipMirrorCommand, unzip_mirror,
+                                      filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
 dispatcher.add_handler(mirror_handler)
 dispatcher.add_handler(tar_mirror_handler)
+dispatcher.add_handler(unzip_mirror_handler)
