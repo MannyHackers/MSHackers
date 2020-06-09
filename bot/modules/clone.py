@@ -17,7 +17,7 @@ def cloneNode(update,context):
         deleteMessage(context.bot,msg)
         sendMessage(result,context.bot,update)
     else:
-        sendMessage("🚧Provide GD Shareable Link to Clone.",bot,update)
+        sendMessage("🚧Provide GD-TD Shareable Link to Clone.",bot,update)
 
 clone_handler = CommandHandler(BotCommands.CloneCommand,cloneNode,filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
 dispatcher.add_handler(clone_handler)
