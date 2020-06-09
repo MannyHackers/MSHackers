@@ -205,7 +205,7 @@ def _mirror(bot, update, isTar=False, extract=False):
         LOGGER.info(f'{link}: {e}')
     listener = MirrorListener(bot, update, isTar, tag, extract)
     ariaDlManager.add_download(link, f'{DOWNLOAD_DIR}/{listener.uid}/',listener)
-    sendStatusMessage(update, bot)
+    sendMessage('Url Added To 📊 /status', bot, update)
     if len(Interval) == 0:
         Interval.append(setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
 
