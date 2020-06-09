@@ -37,7 +37,7 @@ def start(update, context):
 
 @run_async
 def restart(update, context):
-    restart_message = sendMessage("Restarting, Please wait!", context.bot, update)
+    restart_message = sendMessage("♻️Restarting, Please wait!", context.bot, update)
     # Save restart message object in order to reply to it after restarting
     fs_utils.clean_all()
     with open('restart.pickle', 'wb') as status:
@@ -95,7 +95,7 @@ def main():
     if path.exists('restart.pickle'):
         with open('restart.pickle', 'rb') as status:
             restart_message = pickle.load(status)
-        restart_message.edit_text("Restarted Successfully!")
+        restart_message.edit_text("♻️Restarted Successfully!")
         remove('restart.pickle')
 
     start_handler = CommandHandler(BotCommands.StartCommand, start,
@@ -116,7 +116,7 @@ def main():
     dispatcher.add_handler(stats_handler)
     dispatcher.add_handler(log_handler)
     updater.start_polling()
-    LOGGER.info("Bot Started!")
+    LOGGER.info("✅Bot Started!")
     signal.signal(signal.SIGINT, fs_utils.exit_clean_up)
 
 
