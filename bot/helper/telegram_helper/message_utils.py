@@ -76,6 +76,9 @@ def update_all_messages():
 
 def sendStatusMessage(msg, bot):
     progress = get_readable_message()
+    progress += f"<b>CPU:</b> {psutil.cpu_percent()}%" \
+           f" <b>DISK:</b> {psutil.disk_usage('/').percent}%" \
+           f" <b>RAM:</b> {psutil.virtual_memory().percent}%"
     with status_reply_dict_lock:
         if msg.message.chat.id in list(status_reply_dict.keys()):
             try:
