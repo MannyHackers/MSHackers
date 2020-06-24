@@ -23,26 +23,17 @@ def stats(update, context):
     total = get_readable_file_size(total)
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
-    cpuUsage = psutil.cpu_percent(interval=0.5)
-    memory = psutil.virtual_memory().percent
-    disk = psutil.disk_usage('/').percent
-    stats = f'<b>Bot Uptime:</b> {currentTime}\n' \
-            f'<b>Total disk space:</b> {total}\n' \
-            f'<b>Used:</b> {used}  ' \
-            f'<b>Free:</b> {free}\n\n' \
-            f'<b>CPU:</b> {cpuUsage}% ' \
-            f'<b>RAM:</b> {memory}% ' \
-            f'<b>Disk:</b> {disk}%'
+    stats = f'Bot Uptime: {currentTime}\n' \
+            f'Total disk space: {total}\n' \
+            f'Used: {used}\n' \
+            f'Free: {free}'
     sendMessage(stats, context.bot, update)
 
 
 @run_async
 def start(update, context):
-    start_string = f'''
-This is a bot which can mirror all your links to Google drive!
-Type /{BotCommands.HelpCommand} to get a list of available commands
-'''
-    sendMessage(start_string, context.bot, update)
+    sendMessage("This is a bot which can mirror all your links to Google drive!\n"
+                "Type /{BotCommands.HelpCommand} to get a list of available commands", context.bot, update)
 
 
 @run_async
